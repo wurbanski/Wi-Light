@@ -1,3 +1,3 @@
-Tutaj mo¿na wrzuciæ projekt oprogramowania.
+ï»¿Tutaj moÅ¼na wrzuciÄ‡ projekt oprogramowania.
 
-Œrodowisko:
+Åšrodowisko:

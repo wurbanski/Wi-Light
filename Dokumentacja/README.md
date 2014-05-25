@@ -1,4 +1,4 @@
-Tutaj mo¿na wrzuciæ Wszelk¹ dokumentacjê.
+ï»¿Tutaj moÅ¼na wrzuciÄ‡ wszelkÄ… dokumentacjÄ™.
 
 Schematy blokowe:	MS Visio
 Dokumenty:			.docx

@@ -1,3 +1,3 @@
-Tutaj mo¿na wrzuciæ schematy, projekty p³ytki itp.
+ï»¿Tutaj moÅ¼na wrzuciÄ‡ schematy, projekty pÅ‚ytki itp.
 
-Œrodowisko: 
+Åšrodowisko: 

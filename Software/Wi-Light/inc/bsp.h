@@ -34,8 +34,8 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "global_includes.h"
 #include "stm32f4xx_discovery_ioe.h"
+#include "global_includes.h"
 #include "stm32f4xx_discovery_fsmc_sram.h"
 
 /* Exported types ------------------------------------------------------------*/

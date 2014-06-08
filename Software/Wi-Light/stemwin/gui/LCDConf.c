@@ -60,7 +60,6 @@ Purpose     : Display controller configuration (single layer)
 #include "GUI.h"
 #include "GUIDRV_FlexColor.h"
 #include "global_includes.h"
-#include "stm32f4_discovery_lcd.h"
 
 /*********************************************************************
 *
@@ -205,7 +204,7 @@ void LCD_X_Config(void) {
   // Orientation
   //
   //Config.Orientation = GUI_MIRROR_X;
-  Config.RegEntryMode = 0x6830;
+  Config.RegEntryMode = 0x6230;
   GUIDRV_FlexColor_Config(pDevice, &Config);
   //
   // Set controller and operation mode

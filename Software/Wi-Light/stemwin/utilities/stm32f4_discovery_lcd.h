@@ -292,10 +292,10 @@ typedef struct
 void LCD_DeInit(void);   
 void STM32f4_Discovery_LCD_Init(void);
 void LCD_RGB_Test(void);
-void LCD_SetColors(__IO uint16_t _TextColor, __IO uint16_t _BackColor); 
-void LCD_GetColors(__IO uint16_t *_TextColor, __IO uint16_t *_BackColor);
-void LCD_SetTextColor(__IO uint16_t Color);
-void LCD_SetBackColor(__IO uint16_t Color);
+void LCD_SetColors(uint16_t _TextColor, uint16_t _BackColor); 
+void LCD_GetColors(uint16_t *_TextColor, uint16_t *_BackColor);
+void LCD_SetTextColor(uint16_t Color);
+void LCD_SetBackColor(uint16_t Color);
 void LCD_ClearLine(uint16_t Line);
 void LCD_Clear(uint16_t Color);
 void LCD_SetCursor(uint16_t Xpos, uint16_t Ypos);
@@ -319,6 +319,7 @@ void LCD_PolyLineRelative(pPoint Points, uint16_t PointCount);
 void LCD_ClosedPolyLine(pPoint Points, uint16_t PointCount);
 void LCD_ClosedPolyLineRelative(pPoint Points, uint16_t PointCount);
 void LCD_FillPolyLine(pPoint Points, uint16_t PointCount);
+static void delay(uint32_t nCount);
 /**
   * @}
   */ 

@@ -43,7 +43,9 @@
 /** @addtogroup stm32f4xx
   * @{
   */
-    
+
+#define __IO volatile
+
 #ifndef __STM32F4xx_H
 #define __STM32F4xx_H
 

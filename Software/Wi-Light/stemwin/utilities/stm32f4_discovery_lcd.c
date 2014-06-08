@@ -100,7 +100,7 @@
 static sFONT *LCD_Currentfonts;
 
   /* Global variables to set the written text color */
-static __IO uint16_t TextColor = 0x0000, BackColor = 0xFFFF;
+static uint16_t TextColor = 0x0000, BackColor = 0xFFFF;
   
 /**
   * @}
@@ -110,7 +110,7 @@ static __IO uint16_t TextColor = 0x0000, BackColor = 0xFFFF;
   * @{
   */ 
 #ifndef USE_Delay
-static void delay(__IO uint32_t nCount);
+static void delay(uint32_t nCount);
 #endif /* USE_Delay*/
 static void PutPixel(int16_t x, int16_t y);
 static void LCD_PolyLineRelativeClosed(pPoint Points, uint16_t PointCount, uint16_t Closed);
@@ -565,7 +565,7 @@ void LCD_RGB_Test(void)
   * @param  _BackColor: specifies the Background Color.
   * @retval None
   */
-void LCD_SetColors(__IO uint16_t _TextColor, __IO uint16_t _BackColor)
+void LCD_SetColors(uint16_t _TextColor, uint16_t _BackColor)
 {
   TextColor = _TextColor; 
   BackColor = _BackColor;
@@ -579,7 +579,7 @@ void LCD_SetColors(__IO uint16_t _TextColor, __IO uint16_t _BackColor)
             Color.
   * @retval None
   */
-void LCD_GetColors(__IO uint16_t *_TextColor, __IO uint16_t *_BackColor)
+void LCD_GetColors(uint16_t *_TextColor, uint16_t *_BackColor)
 {
   *_TextColor = TextColor; *_BackColor = BackColor;
 }
@@ -589,7 +589,7 @@ void LCD_GetColors(__IO uint16_t *_TextColor, __IO uint16_t *_BackColor)
   * @param  Color: specifies the Text color code RGB(5-6-5).
   * @retval None
   */
-void LCD_SetTextColor(__IO uint16_t Color)
+void LCD_SetTextColor(uint16_t Color)
 {
   TextColor = Color;
 }
@@ -600,7 +600,7 @@ void LCD_SetTextColor(__IO uint16_t Color)
   * @param  Color: specifies the Background color code RGB(5-6-5).
   * @retval None
   */
-void LCD_SetBackColor(__IO uint16_t Color)
+void LCD_SetBackColor(uint16_t Color)
 {
   BackColor = Color;
 }
@@ -957,11 +957,11 @@ void LCD_WriteBMP(uint32_t BmpAddress)
 #if 0
   uint32_t index = 0, size = 0;
   /* Read bitmap size */
-  size = *(__IO uint16_t *) (BmpAddress + 2);
-  size |= (*(__IO uint16_t *) (BmpAddress + 4)) << 16;
+  size = *(uint16_t *) (BmpAddress + 2);
+  size |= (*(uint16_t *) (BmpAddress + 4)) << 16;
   /* Get bitmap data address offset */
-  index = *(__IO uint16_t *) (BmpAddress + 10);
-  index |= (*(__IO uint16_t *) (BmpAddress + 12)) << 16;
+  index = *(uint16_t *) (BmpAddress + 10);
+  index |= (*(uint16_t *) (BmpAddress + 12)) << 16;
   size = (size - index)/2;
   BmpAddress += index;
   /* Set GRAM write direction and BGR = 1 */
@@ -973,7 +973,7 @@ void LCD_WriteBMP(uint32_t BmpAddress)
  
   for(index = 0; index < size; index++)
   {
-    LCD_WriteRAM(*(__IO uint16_t *)BmpAddress);
+    LCD_WriteRAM(*(uint16_t *)BmpAddress);
     BmpAddress += 2;
   }
  
@@ -1344,9 +1344,9 @@ void LCD_FillPolyLine(pPoint Points, uint16_t PointCount)
   * @param  nCount: specifies the delay time length.
   * @retval None
   */
-static void delay(__IO uint32_t nCount)
+static void delay( uint32_t nCount)
 {
-  __IO uint32_t index = 0; 
+  uint32_t index = 0;
   for(index = (10000 * nCount); index != 0; index--)
   {
   }

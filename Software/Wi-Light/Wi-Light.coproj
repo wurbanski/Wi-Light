@@ -87,8 +87,8 @@
     <File name="stemwin/inc/EDIT_Private.h" path="stemwin/inc/EDIT_Private.h" type="1"/>
     <File name="stemwin/inc/LCD.h" path="stemwin/inc/LCD.h" type="1"/>
     <File name="stemwin/inc/GUI_SPRITE_Private.h" path="stemwin/inc/GUI_SPRITE_Private.h" type="1"/>
+    <File name="stemwin/utilities/stm32f4xx_it.c" path="stemwin/utilities/stm32f4xx_it.c" type="1"/>
     <File name="stemwin/gui/GUIDEMO.h" path="stemwin/gui/GUIDEMO.h" type="1"/>
-    <File name="stemwin/utilities/stm32f4xx_it.c" path="../../../STM/Wi-Light/stm32f4xx_it.c" type="1"/>
     <File name="stemwin/inc/SLIDER_Private.h" path="stemwin/inc/SLIDER_Private.h" type="1"/>
     <File name="stemwin/gui/LCDConf.h" path="stemwin/gui/LCDConf.h" type="1"/>
     <File name="stemwin/inc/MENU.h" path="stemwin/inc/MENU.h" type="1"/>
@@ -112,9 +112,9 @@
     <File name="stemwin" path="" type="2"/>
     <File name="src/ManageLightsDLG.c" path="src/ManageLightsDLG.c" type="1"/>
     <File name="stemwin/inc/GRAPH_Private.h" path="stemwin/inc/GRAPH_Private.h" type="1"/>
-    <File name="cmsis_lib/source/stm32f4xx_discovery_ioe.c" path="../../../STM/Wi-Light/stm32f4xx_discovery_ioe.c" type="1"/>
+    <File name="cmsis_lib/source/stm32f4xx_discovery_ioe.c" path="cmsis_lib/source/stm32f4xx_discovery_ioe.c" type="1"/>
     <File name="stemwin/gui" path="" type="2"/>
-    <File name="stemwin/utilities/stm32f4xx_it.h" path="../../../STM/Wi-Light/stm32f4xx_it.h" type="1"/>
+    <File name="stemwin/utilities/stm32f4xx_it.h" path="stemwin/utilities/stm32f4xx_it.h" type="1"/>
     <File name="stemwin/inc/RADIO_Private.h" path="stemwin/inc/RADIO_Private.h" type="1"/>
     <File name="stemwin/lib/libstemwin522_cm4_gcc.a" path="stemwin/lib/libstemwin522_cm4_gcc.a" type="1"/>
     <File name="stemwin/inc/GUI_Private.h" path="stemwin/inc/GUI_Private.h" type="1"/>
@@ -168,7 +168,7 @@
     <File name="stemwin/inc/SCROLLBAR_Private.h" path="stemwin/inc/SCROLLBAR_Private.h" type="1"/>
     <File name="stemwin/inc/MESSAGEBOX.h" path="stemwin/inc/MESSAGEBOX.h" type="1"/>
     <File name="stemwin/inc/LISTWHEEL.h" path="stemwin/inc/LISTWHEEL.h" type="1"/>
-    <File name="cmsis_lib/include/stm32f4xx_discovery_ioe.h" path="../../../STM/Wi-Light/stm32f4xx_discovery_ioe.h" type="1"/>
+    <File name="cmsis_lib/include/stm32f4xx_discovery_ioe.h" path="cmsis_lib/include/stm32f4xx_discovery_ioe.h" type="1"/>
     <File name="cmsis_boot" path="" type="2"/>
     <File name="stemwin/inc/MULTIEDIT.h" path="stemwin/inc/MULTIEDIT.h" type="1"/>
     <File name="cmsis_lib/source/stm32f4xx_fsmc.c" path="cmsis_lib/source/stm32f4xx_fsmc.c" type="1"/>
@@ -224,7 +224,7 @@
     <File name="cmsis_lib/include/stm32f4xx_exti.h" path="cmsis_lib/include/stm32f4xx_exti.h" type="1"/>
     <File name="stemwin/inc/DROPDOWN.h" path="stemwin/inc/DROPDOWN.h" type="1"/>
     <File name="stemwin/common" path="" type="2"/>
-    <File name="inc/stm32f4xx_discovery_fsmc_sram.c" path="../../../STM/Wi-Light/stm32f4xx_discovery_fsmc_sram.c" type="1"/>
+    <File name="inc/stm32f4xx_discovery_fsmc_sram.c" path="src/stm32f4xx_discovery_fsmc_sram.c" type="1"/>
     <File name="stemwin/inc/GUI.h" path="stemwin/inc/GUI.h" type="1"/>
     <File name="stemwin/inc/LISTBOX.h" path="stemwin/inc/LISTBOX.h" type="1"/>
     <File name="stemwin/inc/CALENDAR.h" path="stemwin/inc/CALENDAR.h" type="1"/>

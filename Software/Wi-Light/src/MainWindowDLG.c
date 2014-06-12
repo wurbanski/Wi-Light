@@ -18,8 +18,6 @@
  **********************************************************************
  */
 
-// USER START (Optionally insert additional includes)
-// USER END
 #include "DIALOG.h"
 #include "MENU.h"
 
@@ -31,17 +29,15 @@
  */
 #define ID_WINDOW_0     (GUI_ID_USER + 0x00)
 #define ID_IMAGE_0     (GUI_ID_USER + 0x03)
-#define ID_MENU_0     (GUI_ID_USER + 0x05)
-#define ID_TEXT_0     (GUI_ID_USER + 0x07)
-#define ID_TEXT_1     (GUI_ID_USER + 0x08)
+#define ID_MENU_MAIN     (GUI_ID_USER + 0x05)
+#define ID_TEXT_DATE     (GUI_ID_USER + 0x07)
+#define ID_TEXT_TIME     (GUI_ID_USER + 0x08)
 #define ID_MENU_LIGHTS_CONFIGURE	(GUI_ID_USER + 0x09)
 #define ID_MENU_CONFIGURATION_DATETIME	(GUI_ID_USER + 0x0A)
 #define ID_MENU_HELP_ABOUT	(GUI_ID_USER + 0x0B)
 
 #define ID_IMAGE_0_IMAGE_0     0x00
 
-// USER START (Optionally insert additional defines)
-// USER END
 
 /*********************************************************************
  *
@@ -93,8 +89,6 @@ static U8 _acImage_0[463] = { 0x42, 0x4D, 0xCE, 0x01, 0x00, 0x00, 0x00, 0x00,
 		0x42, 0x10, 0x84, 0x21, 0x40, 0x00, 0x90, 0x84, 0x21, 0x08, 0x42, 0x10,
 		0xC0, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xC0, 0x00, 0x00, };
 
-// USER START (Optionally insert additional static data)
-// USER END
 
 /*********************************************************************
  *
@@ -103,12 +97,10 @@ static U8 _acImage_0[463] = { 0x42, 0x4D, 0xCE, 0x01, 0x00, 0x00, 0x00, 0x00,
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = { {
 		WINDOW_CreateIndirect, "MainWindow", ID_WINDOW_0, 0, 0, 320, 240, 0,
 		0x0, 0 }, { IMAGE_CreateIndirect, "Image", ID_IMAGE_0, 133, 93, 50, 51,
-		0, 0, 0 }, { MENU_CreateIndirect, "Menu", ID_MENU_0, 0, 0, 320, 19, 0,
-		0x0, 0 }, { TEXT_CreateIndirect, "Text", ID_TEXT_0, 6, 220, 69, 16, 0,
-		0x64, 0 }, { TEXT_CreateIndirect, "Text", ID_TEXT_1, 234, 220, 80, 20,
+		0, 0, 0 }, { MENU_CreateIndirect, "Menu", ID_MENU_MAIN, 0, 0, 320, 19, 0,
+		0x0, 0 }, { TEXT_CreateIndirect, "Text", ID_TEXT_DATE, 6, 220, 69, 16, 0,
+		0x64, 0 }, { TEXT_CreateIndirect, "Text", ID_TEXT_TIME, 234, 220, 80, 20,
 		0, 0x64, 0 },
-// USER START (Optionally insert additional widgets)
-// USER END
 		};
 
 /*********************************************************************
@@ -161,8 +153,6 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 	U32 FileSize;
 	int NCode;
 	int Id;
-	// USER START (Optionally insert additional variables)
-	// USER END
 
 	switch (pMsg->MsgId) {
 	case WM_INIT_DIALOG:
@@ -180,7 +170,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		//
 		// Initialization of 'Menu'
 		//
-		hItem = WM_GetDialogItem(pMsg->hWin, ID_MENU_0);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_MENU_MAIN);
 
 		// Create "Lights" menu
 		hSubmenu = MENU_CreateEx(0, 0, 0, 0, WM_UNATTACHED, 0, MENU_CF_VERTICAL, 0);
@@ -200,31 +190,25 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		//
 		// Initialization of 'Text'
 		//
-		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_DATE);
 		TEXT_SetTextColor(hItem, 0x00EFEFEF);
 		TEXT_SetFont(hItem, GUI_FONT_16B_ASCII);
 		TEXT_SetText(hItem, "08/06/2014");
 		//
 		// Initialization of 'Text'
 		//
-		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_TIME);
 		TEXT_SetTextColor(hItem, 0x00FFFFFF);
 		TEXT_SetFont(hItem, GUI_FONT_16B_1);
 		TEXT_SetText(hItem, "23:09");
 		TEXT_SetTextAlign(hItem, GUI_TA_RIGHT | GUI_TA_TOP);
-		// USER START (Optionally insert additional code for further widget initialization)
-		// USER END
 		break;
 	case WM_NOTIFY_PARENT:
 		Id = WM_GetId(pMsg->hWinSrc);
 		NCode = pMsg->Data.v;
 		switch (Id) {
-			// USER START (Optionally insert additional code for further Ids)
-			// USER END
 		}
 		break;
-		// USER START (Optionally insert additional message handling)
-		// USER END
 	case WM_MENU:
 		pMenuData = (MENU_MSG_DATA*) pMsg->Data.p;
 		switch (pMenuData->MsgType) {
@@ -235,6 +219,9 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 				break;
 			case ID_MENU_LIGHTS_CONFIGURE:
 				hManLights = CreateManageLights();
+				break;
+			case ID_MENU_HELP_ABOUT:
+				GUI_MessageBox("Wi-Light v. 0.1a", "About", GUI_MESSAGEBOX_CF_MOVEABLE);
 				break;
 			default:
 				break;
@@ -262,8 +249,5 @@ WM_HWIN CreateMainWindow(void) {
 			_cbDialog, WM_HBKWIN, 0, 0);
 	return hWin;
 }
-
-// USER START (Optionally insert additional public code)
-// USER END
 
 /*************************** End of file ****************************/

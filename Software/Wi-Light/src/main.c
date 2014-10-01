@@ -27,6 +27,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "bsp.h"
+#include "spi_comm.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -54,6 +55,9 @@ int main(void) {
 	GUI_Init();
 
 	GUI_Initialized = 1;
+
+	/* Initialize and configure SPI */
+	SPI_InitConf();
 
 	/* Start Demo */
 //  GUIDEMO_Main();

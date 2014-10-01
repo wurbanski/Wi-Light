@@ -1,5 +1,12 @@
 #include "gui_comm.h"
 
+struct _LIGHT_DATA
+{
+	unsigned int Address;
+	unsigned int State	  : 1,
+				 Reserved : 31;
+} LIGHT_DATA;
+
 int ToggleLightN(int number, WM_HWIN textbox) {
 	//ToDo: get element _number_ from the list
 	//ToDo: communicate
@@ -15,7 +22,6 @@ int ToggleLightModeN(int number, WM_HWIN textbox) {
 	TEXT_SetText(textbox, "Mode: Manual");
 	return 0;
 }
-
 int AddNewLight(int dataStuct) {
 	//ToDo: Everything
 	return 0;

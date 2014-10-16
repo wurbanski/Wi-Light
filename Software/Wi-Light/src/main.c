@@ -28,6 +28,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "bsp.h"
 #include "spi_comm.h"
+#include "nrf24l01_comm.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -58,6 +59,9 @@ int main(void) {
 
 	/* Initialize and configure SPI */
 	SPI_InitConf();
+
+	NRF_Init();
+	NRF_ConfigureTX();
 
 	/* Start Demo */
 //  GUIDEMO_Main();

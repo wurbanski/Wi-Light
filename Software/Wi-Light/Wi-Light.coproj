@@ -100,10 +100,10 @@
     <File name="stemwin/inc/DIALOG_Intern.h" path="stemwin/inc/DIALOG_Intern.h" type="1"/>
     <File name="stemwin/inc/GUIDRV_Template.h" path="stemwin/inc/GUIDRV_Template.h" type="1"/>
     <File name="stemwin/inc/IMAGE.h" path="stemwin/inc/IMAGE.h" type="1"/>
-    <File name="cmsis/core_cm4_simd.h" path="cmsis/core_cm4_simd.h" type="1"/>
-    <File name="stemwin/inc/GUI_VNC.h" path="stemwin/inc/GUI_VNC.h" type="1"/>
     <File name="cmsis_boot/stm32f4xx.h" path="cmsis_boot/stm32f4xx.h" type="1"/>
+    <File name="stemwin/inc/GUI_VNC.h" path="stemwin/inc/GUI_VNC.h" type="1"/>
     <File name="stemwin/utilities/fonts.c" path="stemwin/utilities/fonts.c" type="1"/>
+    <File name="cmsis/core_cm4_simd.h" path="cmsis/core_cm4_simd.h" type="1"/>
     <File name="stemwin/inc/WM_GUI.h" path="stemwin/inc/WM_GUI.h" type="1"/>
     <File name="cmsis/core_cmFunc.h" path="cmsis/core_cmFunc.h" type="1"/>
     <File name="stemwin/inc/RADIO.h" path="stemwin/inc/RADIO.h" type="1"/>
@@ -199,9 +199,9 @@
     <File name="stemwin/inc/WIDGET.h" path="stemwin/inc/WIDGET.h" type="1"/>
     <File name="stemwin/inc/WINDOW_Private.h" path="stemwin/inc/WINDOW_Private.h" type="1"/>
     <File name="inc/gui_comm.h" path="inc/gui_comm.h" type="1"/>
-    <File name="cmsis_boot/stm32f4xx_conf.h" path="cmsis_boot/stm32f4xx_conf.h" type="1"/>
     <File name="stemwin/inc/LCD_SIM.h" path="stemwin/inc/LCD_SIM.h" type="1"/>
     <File name="stemwin/gui/GUIConf.c" path="stemwin/gui/GUIConf.c" type="1"/>
+    <File name="cmsis_boot/stm32f4xx_conf.h" path="cmsis_boot/stm32f4xx_conf.h" type="1"/>
     <File name="cmsis_boot/system_stm32f4xx.h" path="cmsis_boot/system_stm32f4xx.h" type="1"/>
     <File name="stemwin/inc/TREEVIEW_Private.h" path="stemwin/inc/TREEVIEW_Private.h" type="1"/>
     <File name="stemwin/inc/LCD_Protected.h" path="stemwin/inc/LCD_Protected.h" type="1"/>
@@ -216,9 +216,9 @@
     <File name="stemwin/inc/GUIDRV_Lin_Opt_16.h" path="stemwin/inc/GUIDRV_Lin_Opt_16.h" type="1"/>
     <File name="stemwin/inc/GUIDRV_Dist.h" path="stemwin/inc/GUIDRV_Dist.h" type="1"/>
     <File name="stemwin/inc/PROGBAR.h" path="stemwin/inc/PROGBAR.h" type="1"/>
-    <File name="cmsis_lib/include/stm32f4xx_sdio.h" path="cmsis_lib/include/stm32f4xx_sdio.h" type="1"/>
     <File name="stemwin/inc/HEADER_Private.h" path="stemwin/inc/HEADER_Private.h" type="1"/>
     <File name="cmsis_lib/source/stm32f4xx_sdio.c" path="cmsis_lib/source/stm32f4xx_sdio.c" type="1"/>
+    <File name="cmsis_lib/include/stm32f4xx_sdio.h" path="cmsis_lib/include/stm32f4xx_sdio.h" type="1"/>
     <File name="inc" path="" type="2"/>
     <File name="stemwin/inc/GUI_Debug.h" path="stemwin/inc/GUI_Debug.h" type="1"/>
     <File name="cmsis_lib/include/stm32f4xx_exti.h" path="cmsis_lib/include/stm32f4xx_exti.h" type="1"/>

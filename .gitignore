@@ -19,3 +19,7 @@
 *.exe
 *.out
 *.app
+
+# CoIDE work files
+*.co*
+!*.coproj

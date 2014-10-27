@@ -12,17 +12,24 @@
 #include "spi_comm.h"
 #include "stm32f4xx_gpio.h"
 
-unsigned char TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x43,0x10,0x10,0x01}; // Define a static TX address
+/** @brief Global variables */
+uint8_t TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x43,0x10,0x10,0x01}; // Define default TX address
+uint8_t RX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x43,0x10,0x10,0x02}; // Define default RX address
 
 /** @brief Local functions declarations */
 static status_t NRF_WriteReg(uint8_t RegCommand, uint8_t Value);
 static uint8_t NRF_GetRegCommand(uint8_t Reg, uint8_t Operation);
 static void NRF_WriteRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize);
 static void NRF_ReadRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize);
+static uint8_t NRF_ReadReg(uint8_t RegCommand);
 static void delay(uint32_t nCount);
+static void NRF_PowerUpTX();
+static void NRF_PowerDownTX();
+
 
 #ifdef TEST
-static status_t NRF_WriteRegRX(uint8_t Reg, uint8_t* pData, uint8_t DataSize);
+static void NRF_WriteRegDataRX(uint8_t Reg, uint8_t* pData, uint8_t DataSize);
+static status_t NRF_WriteRegRX(uint8_t RegCommand, uint8_t Value);
 #endif
 
 /**
@@ -49,65 +56,87 @@ void NRF_ConfigureRX(void)
 
 }
 
-static status_t NRF_WriteRegRX(uint8_t Reg, uint8_t* pData, uint8_t DataSize)
-{
-	uint8_t RegCommand;
-	uint8_t Status;
-
-	RegCommand = NRF_GetRegCommand(Reg, WRITE);
-	CSN_L();
-	SPI_WriteRead(SPI1, RegCommand);
-	SPI_WriteData(SPI1, pData, DataSize);
-	CSN_H();
-}
-#endif
-
-void NRF_ConfigureTX(void)
-{
-	delay(10000);
-	CE_L();
-	//NRF_WriteRegData(NRF_GetRegCommand(TX_ADDR, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
-	NRF_ReadRegData(NRF_GetRegCommand(TX_ADDR, READ), TX_ADDRESS, TX_ADR_WIDTH);
-	/*
-	NRF_WriteRegData(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
-	NRF_WriteRegData(NRF_GetRegCommand(WR_TX_PLOAD, WRITE), BUF, TX_PLOAD_WIDTH); // Writes data to TX payload
-	NRF_WriteReg(NRF_GetRegCommand(EN_AA, WRITE), 0x01);
-	SPI2_readWriteReg(WRITE_REG + EN_AA, 0x01);
-	// Enable Auto.Ack:Pipe0
-	SPI2_readWriteReg(WRITE_REG + EN_RXADDR, 0x01); // Enable Pipe0
-	SPI2_readWriteReg(WRITE_REG + SETUP_RETR, 0x1a); // 500us + 86us, 10 retrans...
-	SPI2_readWriteReg(WRITE_REG + RF_CH, 40);
-	// Select RF channel 40
-	SPI2_readWriteReg(WRITE_REG + RF_SETUP, 0x07);
-	// TX_PWR:0dBm, Datarate:2Mbps,
-//      LNA:HCURR
-	SPI2_readWriteReg(WRITE_REG + CONFIG, 0x0e);
-	// Set PWR_UP bit, enable CRC(2 bytes)
-	//& Prim:TX. MAX_RT & TX_DS enabled..
-	*/
-	CE_H();
-}
 /**
- * @brief	Write register
- *
- * @param   Reg					Register map to be configured
- * @param	pData				Pointer to data to be send to the register
- * @param	DataSize			Number of data bytes
- *
+ * @brief	None
+ * @param	None
  * @return	None
  */
-static status_t NRF_ConfigureReg(uint8_t Reg, uint8_t* pData, uint8_t DataSize)
+static void NRF_WriteRegDataRX(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize)
 {
-	uint8_t RegCommand;
+	uint8_t ii;
 	uint8_t Status;
 
-	RegCommand = NRF_GetRegCommand(Reg, WRITE);
 	CSN_L();
-	Status = SPI_WriteRead(SPI2, RegCommand);
-	SPI_WriteData(SPI2, pData, DataSize);
+	Status = SPI_WriteRead(SPI1, RegCommand);
+
+	for(ii = 0; ii < DataSize; ii++)
+	{
+		/* catching status just for proper data flow, not used */
+		Status = SPI_WriteRead(SPI1, pData[ii]);
+	}
+	CSN_H();
+}
+
+/**
+ * @brief	None
+ * @param	None
+ * @return	None
+ */
+static void NRF_ReadRegDataRX(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize)
+{
+	uint8_t ii;
+	uint8_t Status;
+
+	CSN_L();
+	SPI_WriteRead(SPI1, RegCommand);
+
+	for(ii = 0; ii < DataSize; ii++)
+	{
+		pData[ii] = SPI_WriteRead(SPI1, 0);
+	}
+	CSN_H();
+}
+
+/**
+ * @brief	None
+ * @param	None
+ * @return	None
+ */
+static status_t NRF_WriteRegRX(uint8_t RegCommand, uint8_t Value)
+{
+	status_t Status;
+
+	CSN_L();
+	Status = SPI_WriteRead(SPI1, RegCommand);
+	Status = SPI_WriteRead(SPI1, Value);
 	CSN_H();
 	return Status;
 }
+
+/**
+ * @brief	None
+ * @param	None
+ * @return	None
+ */
+static void NRF_PowerUpRX()
+{
+	uint8_t RegValue;
+	CE_L();
+	//can be done by checking every time the real value of register as shown below
+	//RegValue = NRF_ReadReg(NRF_GetRegCommand(CONFIG, READ));
+	RegValue = CONFIG_DEFAULT | ((FLG_SET << PWR_UP) | (FLG_SET << PRIM_RX));
+	NRF_WriteRegRX(NRF_GetRegCommand(CONFIG, WRITE), RegValue);
+	CE_H();
+}
+
+static void NRF_PowerDownRX()
+{
+	CE_L();
+	NRF_WriteRegRX(NRF_GetRegCommand(CONFIG, WRITE), CONFIG_DEFAULT);
+	CE_H();
+}
+
+#endif
 
 /**
  * @brief	Get command for register write/read operation
@@ -124,7 +153,6 @@ static uint8_t NRF_GetRegCommand(uint8_t Reg, uint8_t Operation)
 	OperationMask = (Operation ? REGISTER_WRITE : REGISTER_READ);
 	return (OperationMask | (REGISTER_MASK & Reg));
 }
-
 /**
  * @brief	None
  * @param	None
@@ -146,6 +174,11 @@ static void NRF_WriteRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSiz
 	CSN_H();
 }
 
+/**
+ * @brief	None
+ * @param	None
+ * @return	None
+ */
 static void NRF_ReadRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize)
 {
 	uint8_t ii;
@@ -161,6 +194,11 @@ static void NRF_ReadRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize
 	CSN_H();
 }
 
+/**
+ * @brief	None
+ * @param	None
+ * @return	None
+ */
 static status_t NRF_WriteReg(uint8_t RegCommand, uint8_t Value)
 {
 	status_t Status;
@@ -172,6 +210,11 @@ static status_t NRF_WriteReg(uint8_t RegCommand, uint8_t Value)
 	return Status;
 }
 
+/**
+ * @brief	None
+ * @param	None
+ * @return	None
+ */
 static uint8_t NRF_ReadReg(uint8_t RegCommand)
 {
 	uint8_t Byte;
@@ -190,5 +233,73 @@ static void delay(uint32_t nCount)
   {
   }
 }
+
+static void NRF_PowerUpTX()
+{
+	uint8_t RegValue;
+	CE_L();
+	//can be done by checking every time the real value of register as shown below
+	//RegValue = NRF_ReadReg(NRF_GetRegCommand(CONFIG, READ));
+	//RegValue &= ~(FLG_SET << PRIM_RX);
+	RegValue = CONFIG_DEFAULT | (FLG_SET << PWR_UP);
+	NRF_WriteReg(NRF_GetRegCommand(CONFIG, WRITE), RegValue);
+	CE_H();
+}
+
+static void NRF_PowerDownTX()
+{
+	CE_L();
+	NRF_WriteReg(NRF_GetRegCommand(CONFIG, WRITE), CONFIG_DEFAULT);
+	CE_H();
+}
+
+void NRF_ConfigureTX(void)
+{
+	delay(10000);
+	// enter standby mode
+	CE_L();
+
+	// set TX address
+	NRF_WriteRegData(NRF_GetRegCommand(TX_ADDR, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
+	// set the same address for receiving auto ack
+	NRF_WriteRegData(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
+	//NRF_WriteRegData(NRF_GetRegCommand(WR_TX_PLOAD, WRITE), BUF, TX_PLOAD_WIDTH); // Writes data to TX payload
+	// enable auto ack
+	NRF_WriteReg(NRF_GetRegCommand(EN_AA, WRITE), 0x01);
+	// enable pipe 0
+	NRF_WriteReg(NRF_GetRegCommand(EN_RXADDR, WRITE), 0x01);
+	// set retransmission timings, 500us and 10 retries
+	NRF_WriteReg(NRF_GetRegCommand(SETUP_RETR, WRITE), 0x1a);
+	// select RF channel 40
+	NRF_WriteReg(NRF_GetRegCommand(RF_CH, WRITE), 40);
+	// set 2Mbps bit rate and 0dBm output power level
+	NRF_WriteReg(NRF_GetRegCommand(RF_SETUP, WRITE), 0x07);
+
+}
+
+void NRF_Send(uint8_t Data)
+{
+	uint8_t Status;
+	uint8_t SentFlag = FLG_CLRD;
+
+	CE_L();
+	Status = NRF_ReadReg(NRF_GetRegCommand(STATUS, READ));
+
+	while(FLG_CLRD == SentFlag)
+	{
+		if(FLG_CLRD != (Status & STATUS_SENT))
+		{
+			SentFlag = FLG_SET;
+		}
+	}
+
+	NRF_WriteReg(W_TX_PAYLOAD, 0x11);
+	NRF_PowerUpTX();
+
+	CE_H();
+}
+
+
+
 
 

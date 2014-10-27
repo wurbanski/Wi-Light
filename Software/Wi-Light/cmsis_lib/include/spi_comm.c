@@ -105,7 +105,7 @@ void SPI_InitConf()
 	// after init there are set default values, some of them are to be changed
 	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
 	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8; //check if it shouldn't be 4
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4; //check if it shouldn't be 4
 
 	SPI_Init(SPI_PORT_RX, &SPI_InitStructure);
 

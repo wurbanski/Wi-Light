@@ -1,5 +1,7 @@
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_gpio.h"
+#include "global_defs.h"
+
 #ifndef NRF24L01_H
 #define NRF24L01_H
 
@@ -11,8 +13,8 @@
 #define CSN_H()  GPIO_SetBits(GPIOB, GPIO_Pin_12)
 #define CSN_L()  GPIO_ResetBits(GPIOB, GPIO_Pin_12)
 
-#define TX_ADR_WIDTH    5   // 5 bytes TX(RX) address width
-#define TX_PLOAD_WIDTH  20  // 20 bytes TX payload
+#define TX_ADR_WIDTH    5   // 5 bytes TX/RX address width
+#define TX_PLOAD_WIDTH  20  // 20 bytes TX/RX payload
 
 #define CONFIG          0x00  // 'Config' register address
 #define EN_AA           0x01  // 'Enable Auto Acknowledgment' register address
@@ -39,20 +41,29 @@
 #define RX_PW_P5        0x16  // 'RX payload width, pipe5' register address
 #define FIFO_STATUS     0x17  // 'FIFO Status Register' register address
 
+#define PWR_UP			0x01
+#define PRIM_RX			0x00
+#define TX_DR			0x06
+#define TX_DS			0x05
+#define MAX_RT			0x04
+#define EN_CRC			0x03
+#define CRCO			0x02
+#define CONFIG_DEFAULT	((FLG_SET << EN_CRC) | (FLG_CLRD << CRCO))
+#define STATUS_SENT 	((FLG_CLRD << TX_DS) | (FLG_SET << MAX_RT))
 
 #define REGISTER_MASK 			0b00011111
 #define REGISTER_WRITE			0b00100000
 #define REGISTER_READ			0b00000000
-#define RX_PAYLOAD_READ     	0x61  // Define RX payload register address
-#define TX_PAYLOAD_WRITE     	0xA0  // Define TX payload register address
+#define R_RX_PAYLOAD     		0x61  // Define RX payload register address
+#define W_TX_PAYLOAD		    0xA0  // Define TX payload register address
 #define TX_FLUSH        		0xE1  // Define flush TX register command
 #define RX_FLUSH        		0xE2  // Define flush RX register command
 #define REUSE_TX_PL     		0xE3  // Define reuse TX payload register command
 #define NOP             		0xFF  // Define No Operation, might be used to read status register
 
 
-#define WRITE					1
-#define READ					0
+#define WRITE					0x01
+#define READ					0x00
 
 #define NRF_GPIO_PORT			GPIOD
 #define NRF_CE_PIN				GPIO_Pin_2

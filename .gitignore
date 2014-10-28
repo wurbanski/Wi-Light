@@ -23,3 +23,5 @@
 # CoIDE work files
 *.co*
 !*.coproj
+
+# Test

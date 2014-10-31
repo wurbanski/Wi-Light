@@ -51,11 +51,21 @@ void NRF_Init(void)
 }
 
 #ifdef TEST
-void NRF_ConfigureRX(void)
+/**
+ * @brief	None
+ * @param	None
+ * @return	None
+ */
+static uint8_t NRF_ReadRegRX(uint8_t RegCommand)
 {
+	uint8_t Byte;
 
+	CSN_L();
+	SPI_WriteRead(SPI1, RegCommand);
+	Byte = SPI_WriteRead(SPI1, 0);
+	CSN_H();
+	return Byte;
 }
-
 /**
  * @brief	None
  * @param	None
@@ -134,6 +144,27 @@ static void NRF_PowerDownRX()
 	CE_L();
 	NRF_WriteRegRX(NRF_GetRegCommand(CONFIG, WRITE), CONFIG_DEFAULT);
 	CE_H();
+}
+void NRF_ConfigureRX(void)
+{
+	delay(10000);
+	// enter standby mode
+	CE_L();
+
+	// set receiver address, for only two modules present the same address is acceptable
+	NRF_WriteRegData(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
+	// enable auto ack
+	NRF_WriteReg(NRF_GetRegCommand(EN_AA, WRITE), 0x01);
+	// enable pipe 0
+	NRF_WriteReg(NRF_GetRegCommand(EN_RXADDR, WRITE), 0x01);
+	// set payload width to 1 byte
+	NRF_WriteReg(NRF_GetRegCommand(RX_PW_P0, WRITE), TX_PLOAD_WIDTH);
+	// select RF channel 40
+	NRF_WriteReg(NRF_GetRegCommand(RF_CH, WRITE), 40);
+	// set 2Mbps bit rate and 0dBm output power level
+	NRF_WriteReg(NRF_GetRegCommand(RF_SETUP, WRITE), 0x07);
+
+	NRF_PowerUpRX();
 }
 
 #endif
@@ -293,7 +324,7 @@ void NRF_Send(uint8_t Data)
 		}
 	}
 
-	NRF_WriteReg(W_TX_PAYLOAD, 0x11);
+	NRF_WriteReg(W_TX_PAYLOAD, Data);
 	NRF_PowerUpTX();
 
 	CE_H();

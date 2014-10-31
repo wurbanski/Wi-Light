@@ -14,7 +14,7 @@
 #define CSN_L()  GPIO_ResetBits(GPIOB, GPIO_Pin_12)
 
 #define TX_ADR_WIDTH    5   // 5 bytes TX/RX address width
-#define TX_PLOAD_WIDTH  20  // 20 bytes TX/RX payload
+#define TX_PLOAD_WIDTH  1  // 20 bytes TX/RX payload
 
 #define CONFIG          0x00  // 'Config' register address
 #define EN_AA           0x01  // 'Enable Auto Acknowledgment' register address

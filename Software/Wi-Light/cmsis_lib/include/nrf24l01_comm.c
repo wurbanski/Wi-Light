@@ -9,7 +9,6 @@
   */
 
 #include "nrf24l01_comm.h"
-#include "spi_comm.h"
 #include "stm32f4xx_gpio.h"
 
 /** @brief Global variables */
@@ -46,6 +45,12 @@ void NRF_Init(void)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_Pin = NRF_CE_PIN;
 
+#ifdef TEST
+	GPIO_InitStructure.GPIO_Pin = NRF_CE_PIN | NRF_CE_PIN_RX;
+	CE_H_RX();
+#endif
+
+	//TODO: is CE high needed or not?
 	CE_H();
 	GPIO_Init(NRF_GPIO_PORT, &GPIO_InitStructure);
 }
@@ -60,10 +65,10 @@ static uint8_t NRF_ReadRegRX(uint8_t RegCommand)
 {
 	uint8_t Byte;
 
-	CSN_L();
+	CSN_L_RX();
 	SPI_WriteRead(SPI1, RegCommand);
 	Byte = SPI_WriteRead(SPI1, 0);
-	CSN_H();
+	CSN_H_RX();
 	return Byte;
 }
 /**
@@ -76,7 +81,7 @@ static void NRF_WriteRegDataRX(uint8_t RegCommand, uint8_t* pData, uint8_t DataS
 	uint8_t ii;
 	uint8_t Status;
 
-	CSN_L();
+	CSN_L_RX();
 	Status = SPI_WriteRead(SPI1, RegCommand);
 
 	for(ii = 0; ii < DataSize; ii++)
@@ -84,7 +89,7 @@ static void NRF_WriteRegDataRX(uint8_t RegCommand, uint8_t* pData, uint8_t DataS
 		/* catching status just for proper data flow, not used */
 		Status = SPI_WriteRead(SPI1, pData[ii]);
 	}
-	CSN_H();
+	CSN_H_RX();
 }
 
 /**
@@ -97,14 +102,14 @@ static void NRF_ReadRegDataRX(uint8_t RegCommand, uint8_t* pData, uint8_t DataSi
 	uint8_t ii;
 	uint8_t Status;
 
-	CSN_L();
+	CSN_L_RX();
 	SPI_WriteRead(SPI1, RegCommand);
 
 	for(ii = 0; ii < DataSize; ii++)
 	{
 		pData[ii] = SPI_WriteRead(SPI1, 0);
 	}
-	CSN_H();
+	CSN_H_RX();
 }
 
 /**
@@ -116,10 +121,10 @@ static status_t NRF_WriteRegRX(uint8_t RegCommand, uint8_t Value)
 {
 	status_t Status;
 
-	CSN_L();
+	CSN_L_RX();
 	Status = SPI_WriteRead(SPI1, RegCommand);
 	Status = SPI_WriteRead(SPI1, Value);
-	CSN_H();
+	CSN_H_RX();
 	return Status;
 }
 
@@ -131,25 +136,25 @@ static status_t NRF_WriteRegRX(uint8_t RegCommand, uint8_t Value)
 static void NRF_PowerUpRX()
 {
 	uint8_t RegValue;
-	CE_L();
+	CE_L_RX();
 	//can be done by checking every time the real value of register as shown below
 	//RegValue = NRF_ReadReg(NRF_GetRegCommand(CONFIG, READ));
 	RegValue = CONFIG_DEFAULT | ((FLG_SET << PWR_UP) | (FLG_SET << PRIM_RX));
 	NRF_WriteRegRX(NRF_GetRegCommand(CONFIG, WRITE), RegValue);
-	CE_H();
+	CE_H_RX();
 }
 
 static void NRF_PowerDownRX()
 {
-	CE_L();
+	CE_L_RX();
 	NRF_WriteRegRX(NRF_GetRegCommand(CONFIG, WRITE), CONFIG_DEFAULT);
-	CE_H();
+	CE_H_RX();
 }
 void NRF_ConfigureRX(void)
 {
 	delay(10000);
 	// enter standby mode
-	CE_L();
+	CE_L_RX();
 
 	// set receiver address, for only two modules present the same address is acceptable
 	NRF_WriteRegData(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
@@ -293,7 +298,7 @@ void NRF_ConfigureTX(void)
 	// set TX address
 	NRF_WriteRegData(NRF_GetRegCommand(TX_ADDR, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
 	// set the same address for receiving auto ack
-	NRF_WriteRegData(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
+	/*NRF_WriteRegData(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
 	//NRF_WriteRegData(NRF_GetRegCommand(WR_TX_PLOAD, WRITE), BUF, TX_PLOAD_WIDTH); // Writes data to TX payload
 	// enable auto ack
 	NRF_WriteReg(NRF_GetRegCommand(EN_AA, WRITE), 0x01);
@@ -305,7 +310,7 @@ void NRF_ConfigureTX(void)
 	NRF_WriteReg(NRF_GetRegCommand(RF_CH, WRITE), 40);
 	// set 2Mbps bit rate and 0dBm output power level
 	NRF_WriteReg(NRF_GetRegCommand(RF_SETUP, WRITE), 0x07);
-
+	*/
 }
 
 void NRF_Send(uint8_t Data)

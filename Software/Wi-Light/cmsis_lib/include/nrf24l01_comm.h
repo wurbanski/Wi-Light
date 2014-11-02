@@ -1,6 +1,7 @@
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_gpio.h"
 #include "global_defs.h"
+#include "spi_comm.h"
 
 #ifndef NRF24L01_H
 #define NRF24L01_H
@@ -12,6 +13,17 @@
 
 #define CSN_H()  GPIO_SetBits(GPIOB, GPIO_Pin_12)
 #define CSN_L()  GPIO_ResetBits(GPIOB, GPIO_Pin_12)
+
+
+#ifdef TEST
+
+#define CE_H_RX()   GPIO_SetBits(GPIOD, GPIO_Pin_3)
+#define CE_L_RX()   GPIO_ResetBits(GPIOD, GPIO_Pin_3)
+
+#define CSN_H_RX()  GPIO_SetBits(GPIOA, GPIO_Pin_4)
+#define CSN_L_RX()  GPIO_ResetBits(GPIOA, GPIO_Pin_4)
+
+#endif
 
 #define TX_ADR_WIDTH    5   // 5 bytes TX/RX address width
 #define TX_PLOAD_WIDTH  1  // 20 bytes TX/RX payload
@@ -69,6 +81,10 @@
 #define NRF_CE_PIN				GPIO_Pin_2
 #define NRF_GPIO_CLK			RCC_AHB1Periph_GPIOD
 
+#ifdef TEST
+#define NRF_CE_PIN_RX			GPIO_Pin_3
+#endif
+
 /**
  * @brief	None
  * @param	None
@@ -77,5 +93,8 @@
 void NRF_Init(void);
 
 void NRF_ConfigureTX(void);
+#ifdef TEST
+void NRF_ConfigureRX(void);
+#endif
 
 #endif

@@ -62,9 +62,9 @@ int main(void) {
 
 	NRF_Init();
 
-	NRF_ConfigureRX();
+	//NRF_ConfigureRX();
 	NRF_ConfigureTX();
-	NRF_Send(0xAC);
+	//NRF_Send(0xAC);
 
 	/* Start Demo */
 //  GUIDEMO_Main();

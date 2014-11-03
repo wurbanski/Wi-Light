@@ -2,6 +2,7 @@
 #include "stm32f4xx_gpio.h"
 #include "global_defs.h"
 #include "spi_comm.h"
+#include "GUI.h"
 
 #ifndef NRF24L01_H
 #define NRF24L01_H
@@ -61,7 +62,7 @@
 #define EN_CRC			0x03
 #define CRCO			0x02
 #define CONFIG_DEFAULT	((FLG_SET << EN_CRC) | (FLG_CLRD << CRCO))
-#define STATUS_SENT 	((FLG_CLRD << TX_DS) | (FLG_SET << MAX_RT))
+#define STATUS_SENT 	((FLG_SET << TX_DS) | (FLG_SET << MAX_RT))
 
 #define REGISTER_MASK 			0b00011111
 #define REGISTER_WRITE			0b00100000
@@ -72,7 +73,7 @@
 #define RX_FLUSH        		0xE2  // Define flush RX register command
 #define REUSE_TX_PL     		0xE3  // Define reuse TX payload register command
 #define NOP             		0xFF  // Define No Operation, might be used to read status register
-
+#define STATUS_RESET			0x7E
 
 #define WRITE					0x01
 #define READ					0x00
@@ -80,6 +81,8 @@
 #define NRF_GPIO_PORT			GPIOD
 #define NRF_CE_PIN				GPIO_Pin_2
 #define NRF_GPIO_CLK			RCC_AHB1Periph_GPIOD
+
+#define DelayMs					GUI_Delay
 
 #ifdef TEST
 #define NRF_CE_PIN_RX			GPIO_Pin_3

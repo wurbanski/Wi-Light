@@ -85,15 +85,16 @@ void SPI_InitConf()
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_InitStructure.GPIO_Pin = SPI_SCK_PIN_RX | SPI_MOSI_PIN_RX | SPI_MISO_PIN_RX;
 
-	GPIO_Init(SPI_GPIO_PORT, &GPIO_InitStructure);
+	GPIO_Init(SPI_GPIO_PORT_RX, &GPIO_InitStructure);
 
 	// configure pins - CS
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_InitStructure.GPIO_Pin = SPI_CS_PIN;
+	GPIO_InitStructure.GPIO_Pin = SPI_CS_PIN_RX;
 
+	CSN_H();
 	GPIO_Init(SPI_GPIO_PORT_RX, &GPIO_InitStructure);
 
 	// now we can set up the SPI peripheral

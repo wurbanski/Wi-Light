@@ -144,6 +144,16 @@ static void NRF_PowerUpRX()
 	CE_H_RX();
 }
 
+static void NRF_FlushRX()
+{
+	status_t Status;
+
+	CSN_L();
+	Status = SPI_WriteRead(SPI1, RX_FLUSH);
+	CSN_H();
+	return Status;
+}
+
 static void NRF_PowerDownRX()
 {
 	CE_L_RX();
@@ -152,12 +162,13 @@ static void NRF_PowerDownRX()
 }
 void NRF_ConfigureRX(void)
 {
-	delay(10000);
+	DelayMs(1);
 	// enter standby mode
 	CE_L_RX();
 
 	// set receiver address, for only two modules present the same address is acceptable
-	NRF_WriteRegData(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
+	NRF_WriteRegDataRX(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
+	NRF_WriteRegDataRX(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
 	// enable auto ack
 	NRF_WriteReg(NRF_GetRegCommand(EN_AA, WRITE), 0x01);
 	// enable pipe 0
@@ -168,6 +179,7 @@ void NRF_ConfigureRX(void)
 	NRF_WriteReg(NRF_GetRegCommand(RF_CH, WRITE), 40);
 	// set 2Mbps bit rate and 0dBm output power level
 	NRF_WriteReg(NRF_GetRegCommand(RF_SETUP, WRITE), 0x07);
+
 
 	NRF_PowerUpRX();
 }
@@ -262,12 +274,12 @@ static uint8_t NRF_ReadReg(uint8_t RegCommand)
 	return Byte;
 }
 
-static void delay(uint32_t nCount)
+static void NRF_FlushTX()
 {
-  uint32_t index = 0;
-  for(index = (100000 * nCount); index != 0; index--)
-  {
-  }
+
+	CSN_L();
+	SPI_WriteRead(SPI2, TX_FLUSH);
+	CSN_H();
 }
 
 static void NRF_PowerUpTX()
@@ -282,6 +294,13 @@ static void NRF_PowerUpTX()
 	CE_H();
 }
 
+static void NRF_ClearStatus()
+{
+	CSN_L();
+	NRF_WriteReg(NRF_GetRegCommand(STATUS, WRITE), STATUS_RESET);
+	CSN_H();
+}
+
 static void NRF_PowerDownTX()
 {
 	CE_L();
@@ -291,7 +310,7 @@ static void NRF_PowerDownTX()
 
 void NRF_ConfigureTX(void)
 {
-	delay(10000);
+	DelayMs(1);
 	// enter standby mode
 	CE_L();
 
@@ -311,6 +330,9 @@ void NRF_ConfigureTX(void)
 	// set 2Mbps bit rate and 0dBm output power level
 	NRF_WriteReg(NRF_GetRegCommand(RF_SETUP, WRITE), 0x07);
 	*/
+
+	NRF_WriteReg(NRF_GetRegCommand(RX_PW_P0, WRITE), TX_PLOAD_WIDTH);
+	DelayMs(1);
 }
 
 void NRF_Send(uint8_t Data)
@@ -320,15 +342,18 @@ void NRF_Send(uint8_t Data)
 
 	CE_L();
 	Status = NRF_ReadReg(NRF_GetRegCommand(STATUS, READ));
-
+	NRF_FlushTX();
+	NRF_ClearStatus();
+	/*
 	while(FLG_CLRD == SentFlag)
 	{
 		if(FLG_CLRD != (Status & STATUS_SENT))
 		{
 			SentFlag = FLG_SET;
 		}
+	Status = NRF_ReadReg(NRF_GetRegCommand(STATUS, READ));
 	}
-
+	*/
 	NRF_WriteReg(W_TX_PAYLOAD, Data);
 	NRF_PowerUpTX();
 

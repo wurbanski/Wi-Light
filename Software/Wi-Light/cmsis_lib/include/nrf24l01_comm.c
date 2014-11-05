@@ -26,9 +26,11 @@ static void NRF_PowerUpTX();
 static void NRF_PowerDownTX();
 
 
+
 #ifdef TEST
 static void NRF_WriteRegDataRX(uint8_t Reg, uint8_t* pData, uint8_t DataSize);
 static status_t NRF_WriteRegRX(uint8_t RegCommand, uint8_t Value);
+static void NRF_ClearStatusRX();
 #endif
 
 /**
@@ -170,18 +172,27 @@ void NRF_ConfigureRX(void)
 	NRF_WriteRegDataRX(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
 	NRF_WriteRegDataRX(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
 	// enable auto ack
-	NRF_WriteReg(NRF_GetRegCommand(EN_AA, WRITE), 0x01);
+	NRF_WriteRegRX(NRF_GetRegCommand(EN_AA, WRITE), 0x01);
 	// enable pipe 0
-	NRF_WriteReg(NRF_GetRegCommand(EN_RXADDR, WRITE), 0x01);
+	NRF_WriteRegRX(NRF_GetRegCommand(EN_RXADDR, WRITE), 0x01);
 	// set payload width to 1 byte
-	NRF_WriteReg(NRF_GetRegCommand(RX_PW_P0, WRITE), TX_PLOAD_WIDTH);
+	NRF_WriteRegRX(NRF_GetRegCommand(RX_PW_P0, WRITE), TX_PLOAD_WIDTH);
 	// select RF channel 40
-	NRF_WriteReg(NRF_GetRegCommand(RF_CH, WRITE), 40);
+	NRF_WriteRegRX(NRF_GetRegCommand(RF_CH, WRITE), 2);
 	// set 2Mbps bit rate and 0dBm output power level
-	NRF_WriteReg(NRF_GetRegCommand(RF_SETUP, WRITE), 0x07);
+	NRF_WriteRegRX(NRF_GetRegCommand(RF_SETUP, WRITE), 0x07);
 
 
 	NRF_PowerUpRX();
+	DelayMs(1);
+
+}
+
+static void NRF_ClearStatusRX()
+{
+	CSN_L_RX();
+	NRF_WriteRegRX(NRF_GetRegCommand(STATUS, WRITE), STATUS_RESET);
+	CSN_H_RX();
 }
 
 #endif
@@ -317,7 +328,7 @@ void NRF_ConfigureTX(void)
 	// set TX address
 	NRF_WriteRegData(NRF_GetRegCommand(TX_ADDR, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
 	// set the same address for receiving auto ack
-	/*NRF_WriteRegData(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
+	NRF_WriteRegData(NRF_GetRegCommand(RX_ADDR_P0, WRITE), TX_ADDRESS, TX_ADR_WIDTH);
 	//NRF_WriteRegData(NRF_GetRegCommand(WR_TX_PLOAD, WRITE), BUF, TX_PLOAD_WIDTH); // Writes data to TX payload
 	// enable auto ack
 	NRF_WriteReg(NRF_GetRegCommand(EN_AA, WRITE), 0x01);
@@ -326,24 +337,25 @@ void NRF_ConfigureTX(void)
 	// set retransmission timings, 500us and 10 retries
 	NRF_WriteReg(NRF_GetRegCommand(SETUP_RETR, WRITE), 0x1a);
 	// select RF channel 40
-	NRF_WriteReg(NRF_GetRegCommand(RF_CH, WRITE), 40);
+	NRF_WriteReg(NRF_GetRegCommand(RF_CH, WRITE), 2);
 	// set 2Mbps bit rate and 0dBm output power level
 	NRF_WriteReg(NRF_GetRegCommand(RF_SETUP, WRITE), 0x07);
-	*/
 
-	NRF_WriteReg(NRF_GetRegCommand(RX_PW_P0, WRITE), TX_PLOAD_WIDTH);
-	DelayMs(1);
+	DelayMs(2);
+	//NRF_WriteReg(NRF_GetRegCommand(RX_PW_P0, WRITE), TX_PLOAD_WIDTH);
 }
 
 void NRF_Send(uint8_t Data)
 {
 	uint8_t Status;
+	uint8_t DataRX;
 	uint8_t SentFlag = FLG_CLRD;
 
 	CE_L();
 	Status = NRF_ReadReg(NRF_GetRegCommand(STATUS, READ));
 	NRF_FlushTX();
 	NRF_ClearStatus();
+
 	/*
 	while(FLG_CLRD == SentFlag)
 	{
@@ -356,8 +368,14 @@ void NRF_Send(uint8_t Data)
 	*/
 	NRF_WriteReg(W_TX_PAYLOAD, Data);
 	NRF_PowerUpTX();
+	DelayMs(1);
+	CE_L();
+	DelayMs(20);
+	Status = NRF_ReadReg(NRF_GetRegCommand(STATUS, READ));
+	DataRX = NRF_ReadRegRX(R_RX_PAYLOAD);
+	NRF_ClearStatusRX();
+	DelayMs(1);
 
-	CE_H();
 }
 
 

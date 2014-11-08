@@ -56,18 +56,7 @@
 #define SPI_MOSI_AF_RX             	GPIO_AF_SPI1
 #endif
 
-/**
- * @brief	None
- * @param	None
- * @return	None
- */
 void SPI_InitConf();
-
-/**
- * @brief	None
- * @param	None
- * @return	None
- */
 uint8_t SPI_WriteRead(SPI_TypeDef* SPIx, uint8_t Byte);
 void SPI_WriteData(SPI_TypeDef* SPIx, uint8_t* pData, uint8_t DataSize);
 

@@ -14,7 +14,7 @@
 #include "nrf24l01_comm.h"
 
 /**
- * @brief	None
+ * @brief	Configure SPI and GPIO ports
  * @param	None
  * @return	None
  */
@@ -53,8 +53,6 @@ void SPI_InitConf()
 
 	// now we can set up the SPI peripheral
 	// Assume the target is write only and we look after the chip select ourselves
-	// SPI clock rate will be system frequency/4/prescaler
-	// so here we will go for 72/4/8 = 2.25MHz
 	SPI_I2S_DeInit(SPI_PORT); // is this really needed?
 	SPI_StructInit(&SPI_InitStructure);
 	// after init there are set default values, some of them are to be changed
@@ -99,14 +97,12 @@ void SPI_InitConf()
 
 	// now we can set up the SPI peripheral
 	// Assume the target is write only and we look after the chip select ourselves
-	// SPI clock rate will be system frequency/4/prescaler
-	// so here we will go for 72/4/8 = 2.25MHz
 	SPI_I2S_DeInit(SPI_PORT_RX); // is this really needed?
 	SPI_StructInit(&SPI_InitStructure);
 	// after init there are set default values, some of them are to be changed
 	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
 	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4; //check if it shouldn't be 4
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
 
 	SPI_Init(SPI_PORT_RX, &SPI_InitStructure);
 
@@ -118,9 +114,10 @@ void SPI_InitConf()
 }
 
 /**
- * @brief	None
- * @param	None
- * @return	None
+ * @brief	Send/read data through SPI
+ * @param	SPIx					SPI number
+ * @param	Byte					Byte to be sent
+ * @return	ReceivedData			Byte received
  */
 uint8_t SPI_WriteRead(SPI_TypeDef* SPIx, uint8_t Byte)
 {

@@ -61,10 +61,16 @@ int main(void) {
 	SPI_InitConf();
 
 	NRF_Init();
-
+#ifdef TEST
 	NRF_ConfigureRX();
+#endif
+
+	/* configure TX */
 	NRF_ConfigureTX();
+
+#ifdef TEST
 	NRF_Send(0xAC);
+#endif
 
 	/* Start Demo */
 //  GUIDEMO_Main();

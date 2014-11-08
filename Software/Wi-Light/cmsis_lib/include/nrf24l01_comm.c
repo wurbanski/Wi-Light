@@ -13,23 +13,23 @@
 
 /** @brief Global variables */
 uint8_t TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x43,0x10,0x10,0x01}; // Define default TX address
-uint8_t RX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x43,0x10,0x10,0x02}; // Define default RX address
 
 /** @brief Local functions declarations */
-static status_t NRF_WriteReg(uint8_t RegCommand, uint8_t Value);
+static void NRF_WriteReg(uint8_t RegCommand, uint8_t Value);
 static uint8_t NRF_GetRegCommand(uint8_t Reg, uint8_t Operation);
 static void NRF_WriteRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize);
 static void NRF_ReadRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize);
 static uint8_t NRF_ReadReg(uint8_t RegCommand);
-static void delay(uint32_t nCount);
 static void NRF_PowerUpTX();
 static void NRF_PowerDownTX();
 
 
-
 #ifdef TEST
+static uint8_t NRF_ReadRegRX(uint8_t RegCommand);
 static void NRF_WriteRegDataRX(uint8_t Reg, uint8_t* pData, uint8_t DataSize);
-static status_t NRF_WriteRegRX(uint8_t RegCommand, uint8_t Value);
+static void NRF_WriteRegRX(uint8_t RegCommand, uint8_t Value);
+static void NRF_PowerUpRX();
+static void NRF_PowerDownRX();
 static void NRF_ClearStatusRX();
 #endif
 
@@ -59,9 +59,9 @@ void NRF_Init(void)
 
 #ifdef TEST
 /**
- * @brief	None
- * @param	None
- * @return	None
+ * @brief	Read 8bit register from receiver
+ * @param	RegCommand				command for reading specific register
+ * @return	Byte					byte with register value
  */
 static uint8_t NRF_ReadRegRX(uint8_t RegCommand)
 {
@@ -74,35 +74,37 @@ static uint8_t NRF_ReadRegRX(uint8_t RegCommand)
 	return Byte;
 }
 /**
- * @brief	None
- * @param	None
+ * @brief	Write register data longer than 8bits
+ * @param	RegCommand				command for writing to specific register in receiver
+ * @param	pData					pointer to data to be written
+ * @param	DataSize				number of bytes to be written
  * @return	None
  */
 static void NRF_WriteRegDataRX(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize)
 {
 	uint8_t ii;
-	uint8_t Status;
 
 	CSN_L_RX();
-	Status = SPI_WriteRead(SPI1, RegCommand);
+	SPI_WriteRead(SPI1, RegCommand);
 
 	for(ii = 0; ii < DataSize; ii++)
 	{
-		/* catching status just for proper data flow, not used */
-		Status = SPI_WriteRead(SPI1, pData[ii]);
+		// catching status just for proper data flow, not used
+		SPI_WriteRead(SPI1, pData[ii]);
 	}
 	CSN_H_RX();
 }
 
 /**
- * @brief	None
- * @param	None
+ * @brief	Read register data longer than 8bits
+ * @param	RegCommand				command for reading from specific register in receiver
+ * @param	pData					pointer to data to be read
+ * @param	DataSize				number of bytes to be read
  * @return	None
  */
 static void NRF_ReadRegDataRX(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize)
 {
 	uint8_t ii;
-	uint8_t Status;
 
 	CSN_L_RX();
 	SPI_WriteRead(SPI1, RegCommand);
@@ -115,27 +117,25 @@ static void NRF_ReadRegDataRX(uint8_t RegCommand, uint8_t* pData, uint8_t DataSi
 }
 
 /**
- * @brief	None
- * @param	None
+ * @brief	Write 8bit register in receiver
+ * @param	RegCommand				command for writing specific register
+ * @param	Value					value to be written to register
  * @return	None
  */
-static status_t NRF_WriteRegRX(uint8_t RegCommand, uint8_t Value)
+static void NRF_WriteRegRX(uint8_t RegCommand, uint8_t Value)
 {
-	status_t Status;
-
 	CSN_L_RX();
-	Status = SPI_WriteRead(SPI1, RegCommand);
-	Status = SPI_WriteRead(SPI1, Value);
+	SPI_WriteRead(SPI1, RegCommand);
+	SPI_WriteRead(SPI1, Value);
 	CSN_H_RX();
-	return Status;
 }
 
 /**
- * @brief	None
+ * @brief	Power up receiver
  * @param	None
  * @return	None
  */
-static void NRF_PowerUpRX()
+static void NRF_PowerUpRX(void)
 {
 	uint8_t RegValue;
 	CE_L_RX();
@@ -146,22 +146,35 @@ static void NRF_PowerUpRX()
 	CE_H_RX();
 }
 
-static void NRF_FlushRX()
+/**
+ * @brief	Flush RX FIFO
+ * @param	None
+ * @return	None
+ */
+static void NRF_FlushRX(void)
 {
-	status_t Status;
-
 	CSN_L();
-	Status = SPI_WriteRead(SPI1, RX_FLUSH);
+	SPI_WriteRead(SPI1, RX_FLUSH);
 	CSN_H();
-	return Status;
 }
 
-static void NRF_PowerDownRX()
+/**
+ * @brief	Power down receiver
+ * @param	None
+ * @return	None
+ */
+static void NRF_PowerDownRX(void)
 {
 	CE_L_RX();
 	NRF_WriteRegRX(NRF_GetRegCommand(CONFIG, WRITE), CONFIG_DEFAULT);
 	CE_H_RX();
 }
+
+/**
+ * @brief	Configure module to RX mode
+ * @param	None
+ * @return	None
+ */
 void NRF_ConfigureRX(void)
 {
 	DelayMs(1);
@@ -177,17 +190,21 @@ void NRF_ConfigureRX(void)
 	NRF_WriteRegRX(NRF_GetRegCommand(EN_RXADDR, WRITE), 0x01);
 	// set payload width to 1 byte
 	NRF_WriteRegRX(NRF_GetRegCommand(RX_PW_P0, WRITE), TX_PLOAD_WIDTH);
-	// select RF channel 40
+	// select RF channel 2
 	NRF_WriteRegRX(NRF_GetRegCommand(RF_CH, WRITE), 2);
 	// set 2Mbps bit rate and 0dBm output power level
 	NRF_WriteRegRX(NRF_GetRegCommand(RF_SETUP, WRITE), 0x07);
-
 
 	NRF_PowerUpRX();
 	DelayMs(1);
 
 }
 
+/**
+ * @brief	Clear status flags in receiver
+ * @param	None
+ * @return	None
+ */
 static void NRF_ClearStatusRX()
 {
 	CSN_L_RX();
@@ -199,10 +216,8 @@ static void NRF_ClearStatusRX()
 
 /**
  * @brief	Get command for register write/read operation
- *
  * @param   Reg					Register map to be configured
  * @param	Operation			Read or Write operation
- *
  * @return	Command byte for r/w operation on given register
  */
 static uint8_t NRF_GetRegCommand(uint8_t Reg, uint8_t Operation)
@@ -212,36 +227,38 @@ static uint8_t NRF_GetRegCommand(uint8_t Reg, uint8_t Operation)
 	OperationMask = (Operation ? REGISTER_WRITE : REGISTER_READ);
 	return (OperationMask | (REGISTER_MASK & Reg));
 }
+
 /**
- * @brief	None
- * @param	None
+ * @brief	Write register data longer than 8bits
+ * @param	RegCommand				command for writing to specific register in transmitter
+ * @param	pData					pointer to data to be written
+ * @param	DataSize				number of bytes to be written
  * @return	None
  */
 static void NRF_WriteRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize)
 {
 	uint8_t ii;
-	uint8_t Status;
 
 	CSN_L();
-	Status = SPI_WriteRead(SPI2, RegCommand);
+	SPI_WriteRead(SPI2, RegCommand);
 
 	for(ii = 0; ii < DataSize; ii++)
 	{
-		/* catching status just for proper data flow, not used */
-		Status = SPI_WriteRead(SPI2, pData[ii]);
+		SPI_WriteRead(SPI2, pData[ii]);
 	}
 	CSN_H();
 }
 
 /**
- * @brief	None
- * @param	None
+ * @brief	Read register data longer than 8bits from transmitter
+ * @param	RegCommand				command for reading from specific register in transmitter
+ * @param	pData					pointer to data to be read
+ * @param	DataSize				number of bytes to be read
  * @return	None
  */
 static void NRF_ReadRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize)
 {
 	uint8_t ii;
-	uint8_t Status;
 
 	CSN_L();
 	SPI_WriteRead(SPI2, RegCommand);
@@ -254,25 +271,23 @@ static void NRF_ReadRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize
 }
 
 /**
- * @brief	None
- * @param	None
+ * @brief	Write 8bit register in transmitter
+ * @param	RegCommand				command for writing specific register
+ * @param	Value					value to be written to register
  * @return	None
  */
-static status_t NRF_WriteReg(uint8_t RegCommand, uint8_t Value)
+static void NRF_WriteReg(uint8_t RegCommand, uint8_t Value)
 {
-	status_t Status;
-
 	CSN_L();
-	Status = SPI_WriteRead(SPI2, RegCommand);
-	Status = SPI_WriteRead(SPI2, Value);
+	SPI_WriteRead(SPI2, RegCommand);
+	SPI_WriteRead(SPI2, Value);
 	CSN_H();
-	return Status;
 }
 
 /**
- * @brief	None
- * @param	None
- * @return	None
+ * @brief	Read 8bit register from transmitter
+ * @param	RegCommand				command for reading specific register
+ * @return	Byte					byte with register value
  */
 static uint8_t NRF_ReadReg(uint8_t RegCommand)
 {
@@ -285,6 +300,11 @@ static uint8_t NRF_ReadReg(uint8_t RegCommand)
 	return Byte;
 }
 
+/**
+ * @brief	Flush TX FIFO
+ * @param	None
+ * @return	None
+ */
 static void NRF_FlushTX()
 {
 
@@ -293,6 +313,11 @@ static void NRF_FlushTX()
 	CSN_H();
 }
 
+/**
+ * @brief	Power up transmitter
+ * @param	None
+ * @return	None
+ */
 static void NRF_PowerUpTX()
 {
 	uint8_t RegValue;
@@ -305,6 +330,11 @@ static void NRF_PowerUpTX()
 	CE_H();
 }
 
+/**
+ * @brief	Clear status flags in transmitter
+ * @param	None
+ * @return	None
+ */
 static void NRF_ClearStatus()
 {
 	CSN_L();
@@ -312,6 +342,11 @@ static void NRF_ClearStatus()
 	CSN_H();
 }
 
+/**
+ * @brief	Power down transmitter
+ * @param	None
+ * @return	None
+ */
 static void NRF_PowerDownTX()
 {
 	CE_L();
@@ -319,6 +354,11 @@ static void NRF_PowerDownTX()
 	CE_H();
 }
 
+/**
+ * @brief	Configure module to TX mode
+ * @param	None
+ * @return	None
+ */
 void NRF_ConfigureTX(void)
 {
 	DelayMs(1);
@@ -336,7 +376,7 @@ void NRF_ConfigureTX(void)
 	NRF_WriteReg(NRF_GetRegCommand(EN_RXADDR, WRITE), 0x01);
 	// set retransmission timings, 500us and 10 retries
 	NRF_WriteReg(NRF_GetRegCommand(SETUP_RETR, WRITE), 0x1a);
-	// select RF channel 40
+	// select RF channel 2
 	NRF_WriteReg(NRF_GetRegCommand(RF_CH, WRITE), 2);
 	// set 2Mbps bit rate and 0dBm output power level
 	NRF_WriteReg(NRF_GetRegCommand(RF_SETUP, WRITE), 0x07);
@@ -345,37 +385,43 @@ void NRF_ConfigureTX(void)
 	//NRF_WriteReg(NRF_GetRegCommand(RX_PW_P0, WRITE), TX_PLOAD_WIDTH);
 }
 
+/**
+ * @brief	Send 8bit data to be transmitted
+ * @param	Data					data to be transmitted
+ * @return	None
+ */
 void NRF_Send(uint8_t Data)
 {
 	uint8_t Status;
 	uint8_t DataRX;
-	uint8_t SentFlag = FLG_CLRD;
+	//only 8bit data function has been implemented as sending more than 8bit seems to be unnecessary
 
 	CE_L();
-	Status = NRF_ReadReg(NRF_GetRegCommand(STATUS, READ));
+
 	NRF_FlushTX();
 	NRF_ClearStatus();
 
-	/*
-	while(FLG_CLRD == SentFlag)
-	{
-		if(FLG_CLRD != (Status & STATUS_SENT))
-		{
-			SentFlag = FLG_SET;
-		}
-	Status = NRF_ReadReg(NRF_GetRegCommand(STATUS, READ));
-	}
-	*/
 	NRF_WriteReg(W_TX_PAYLOAD, Data);
 	NRF_PowerUpTX();
 	DelayMs(1);
 	CE_L();
+
+	// wait for a while and check whether message has been sent
+	// if not - display a message with error
+	// e.g. that connection with a lamp was lost
+
 	DelayMs(20);
 	Status = NRF_ReadReg(NRF_GetRegCommand(STATUS, READ));
+
+	if(STATUS_SENT != Status)
+	{
+		//TODO: insert message to be displayed
+	}
+
+#ifdef TEST
 	DataRX = NRF_ReadRegRX(R_RX_PAYLOAD);
 	NRF_ClearStatusRX();
-	DelayMs(1);
-
+#endif
 }
 
 

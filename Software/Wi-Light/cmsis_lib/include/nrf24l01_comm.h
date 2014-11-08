@@ -62,7 +62,7 @@
 #define EN_CRC			0x03
 #define CRCO			0x02
 #define CONFIG_DEFAULT	((FLG_SET << EN_CRC) | (FLG_CLRD << CRCO))
-#define STATUS_SENT 	((FLG_SET << TX_DS) | (FLG_SET << MAX_RT))
+#define STATUS_SENT 	(FLG_SET << TX_DS)
 
 #define REGISTER_MASK 			0b00011111
 #define REGISTER_WRITE			0b00100000
@@ -99,5 +99,6 @@ void NRF_ConfigureTX(void);
 #ifdef TEST
 void NRF_ConfigureRX(void);
 #endif
+void NRF_Send(uint8_t Data);
 
 #endif

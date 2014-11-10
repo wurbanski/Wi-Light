@@ -34,7 +34,7 @@ static void NRF_ClearStatusRX();
 #endif
 
 /**
- * @brief	None
+ * @brief	CE signal initialization needed for communication with wireless module
  *
  * @param	None
  *

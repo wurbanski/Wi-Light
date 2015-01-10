@@ -70,6 +70,10 @@ int main(void) {
 
 #ifdef TEST
 	NRF_Send(0xAC);
+	DelayMs(10);
+	NRF_Send(0xCA);
+	DelayMs(10);
+	NRF_Send(0xAA);
 #endif
 
 	/* Start Demo */
@@ -129,6 +133,13 @@ void MainTask(void) {
 	hWinMain = CreateMainWindow();
 	while (1) {
 		GUI_Delay(10);
+#ifdef TEST
+	NRF_Send(0xCA);
+	DelayMs(1080);
+	NRF_Send(0xAC);
+	DelayMs(1000);
+#endif
+
 	}
 }
 

@@ -40,7 +40,7 @@ int TriggerSOS(int number, WM_HWIN textbox) {
 			}
 			for (i=0; i<3; i++) { // piiip, piiip, piiip
 				NRF_Send(0xCA);
-				GUI_Delay(500);
+				GUI_Delay(1000);
 				NRF_Send(0xAC);
 				GUI_Delay(250);
 			}

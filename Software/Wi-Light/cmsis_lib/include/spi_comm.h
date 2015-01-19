@@ -5,7 +5,7 @@
 #define SPI_COMM_H
 
 // TODO: remove this definition when testing is finished
-#define TEST
+//#define TEST
 
 /** @brief SPI number definition */
 #define SPI_PORT					SPI2

@@ -82,6 +82,8 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = { {
  **********************************************************************
  */
 
+extern unsigned char LED_on;
+
 // USER START (Optionally insert additional static code)
 // USER END
 /*********************************************************************
@@ -127,7 +129,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		// Initialization of 'Mode' Button
 		//
 		hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_MODE);
-		BUTTON_SetText(hItem, "Toggle Auto");
+		BUTTON_SetText(hItem, "Trigger SOS");
 		//
 		// Initialization of 'Add' Button
 		//
@@ -172,7 +174,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		case ID_BUTTON_MODE:
 			switch (NCode) {
 			case WM_NOTIFICATION_CLICKED:
-				ToggleLightModeN(1, WM_GetDialogItem(pMsg->hWin, ID_TEXT_MODE));
+				TriggerSOS(1, WM_GetDialogItem(pMsg->hWin, ID_TEXT_MODE));
 				break;
 			case WM_NOTIFICATION_RELEASED:
 				break;

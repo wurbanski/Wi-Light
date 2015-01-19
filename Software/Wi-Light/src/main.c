@@ -42,6 +42,9 @@ uint8_t GUI_Initialized = 0;
  * @param  None
  * @retval None
  */
+
+uint8_t LED_on = 0;
+
 int main(void) {
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);

@@ -94,7 +94,7 @@
  * @return	None
  */
 void NRF_Init(void);
-
+uint8_t NRF_ReadReg(uint8_t RegCommand);
 void NRF_ConfigureTX(void);
 #ifdef TEST
 void NRF_ConfigureRX(void);

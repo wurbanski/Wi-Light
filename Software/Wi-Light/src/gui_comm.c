@@ -14,12 +14,12 @@ struct _LIGHT_DATA
 int ToggleLightN(int number, WM_HWIN textbox) {
 	//ToDo: get element _number_ from the list
 	if (LED_on == 0) {
-		TEXT_SetText(textbox, "Status: On");
-		NRF_Send(0xCA);
+		TEXT_SetText(textbox, "Status: AC");
+		NRF_Send(0xAC);
 		LED_on = 1;
 	} else {
-		TEXT_SetText(textbox, "Status: Off");
-		NRF_Send(0xAC);
+		TEXT_SetText(textbox, "Status: CA");
+		NRF_Send(0xCA);
 		LED_on = 0;
 	}
 	return 0;
@@ -33,22 +33,22 @@ int TriggerSOS(int number, WM_HWIN textbox) {
 			TEXT_SetText(textbox, "Mode: SOS");
 			LED_on = 1;
 			for (i=0; i<3; i++) { // pip, pip, pip
-				NRF_Send(0xCA);
-				GUI_Delay(500);
 				NRF_Send(0xAC);
 				GUI_Delay(250);
+				NRF_Send(0xCA);
+				GUI_Delay(100);
 			}
 			for (i=0; i<3; i++) { // piiip, piiip, piiip
-				NRF_Send(0xCA);
-				GUI_Delay(1000);
 				NRF_Send(0xAC);
-				GUI_Delay(250);
+				GUI_Delay(500);
+				NRF_Send(0xCA);
+				GUI_Delay(100);
 			}
 			for (i=0; i<3; i++) { // pip, pip, pip
-				NRF_Send(0xCA);
-				GUI_Delay(500);
 				NRF_Send(0xAC);
 				GUI_Delay(250);
+				NRF_Send(0xCA);
+				GUI_Delay(100);
 			}
 			LED_on = 0;
 	}

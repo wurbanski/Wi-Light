@@ -160,7 +160,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		// Initialization of 'MainWindow'
 		//
 		hItem = pMsg->hWin;
-		WINDOW_SetBkColor(hItem, 0x00000000);
+		WINDOW_SetBkColor(hItem, 0x00888888);
 		//
 		// Initialization of 'Image'
 		//
@@ -193,14 +193,14 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_DATE);
 		TEXT_SetTextColor(hItem, 0x00EFEFEF);
 		TEXT_SetFont(hItem, GUI_FONT_16B_ASCII);
-		TEXT_SetText(hItem, "08/06/2014");
+		TEXT_SetText(hItem, "20/01/2015");
 		//
 		// Initialization of 'Text'
 		//
 		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_TIME);
 		TEXT_SetTextColor(hItem, 0x00FFFFFF);
 		TEXT_SetFont(hItem, GUI_FONT_16B_1);
-		TEXT_SetText(hItem, "23:09");
+		TEXT_SetText(hItem, "21:09");
 		TEXT_SetTextAlign(hItem, GUI_TA_RIGHT | GUI_TA_TOP);
 		break;
 	case WM_NOTIFY_PARENT:
@@ -221,7 +221,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 				hManLights = CreateManageLights();
 				break;
 			case ID_MENU_HELP_ABOUT:
-				GUI_MessageBox("Wi-Light v. 0.1a", "About", GUI_MESSAGEBOX_CF_MOVEABLE);
+				GUI_MessageBox("Wi-Light v. 0.1a\nJoanna Stencel\nMalgorzata Targan\nWojciech Urbanski", "About", GUI_MESSAGEBOX_CF_MOVEABLE);
 				break;
 			default:
 				break;

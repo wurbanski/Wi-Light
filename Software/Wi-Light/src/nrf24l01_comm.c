@@ -19,7 +19,7 @@ static void NRF_WriteReg(uint8_t RegCommand, uint8_t Value);
 static uint8_t NRF_GetRegCommand(uint8_t Reg, uint8_t Operation);
 static void NRF_WriteRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize);
 static void NRF_ReadRegData(uint8_t RegCommand, uint8_t* pData, uint8_t DataSize);
-static uint8_t NRF_ReadReg(uint8_t RegCommand);
+//static uint8_t NRF_ReadReg(uint8_t RegCommand);
 static void NRF_PowerUpTX();
 static void NRF_PowerDownTX();
 
@@ -289,7 +289,8 @@ static void NRF_WriteReg(uint8_t RegCommand, uint8_t Value)
  * @param	RegCommand				command for reading specific register
  * @return	Byte					byte with register value
  */
-static uint8_t NRF_ReadReg(uint8_t RegCommand)
+//static
+uint8_t NRF_ReadReg(uint8_t RegCommand)
 {
 	uint8_t Byte;
 

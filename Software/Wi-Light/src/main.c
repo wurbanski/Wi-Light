@@ -43,7 +43,8 @@ uint8_t GUI_Initialized = 0;
  * @retval None
  */
 
-uint8_t LED_on = 0;
+uint8_t LED_on = 1;
+//uint8_t NRF_status = 0;
 
 int main(void) {
 
@@ -136,6 +137,7 @@ void MainTask(void) {
 	hWinMain = CreateMainWindow();
 	while (1) {
 		GUI_Delay(10);
+
 #ifdef TEST
 	NRF_Send(0xCA);
 	DelayMs(1080);
